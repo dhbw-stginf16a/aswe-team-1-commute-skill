@@ -45,13 +45,14 @@ application = app.app
 while True:
     print("Attempt registration")
     try:
-        r = requests.post("{}/skill".format(CENTRAL_NODE_BASE_URL), json = { "name": "preferences", "endpoint": OUR_URL, "interests": []})
+        r = requests.post("{}/skill".format(CENTRAL_NODE_BASE_URL), json = { "name": "commute", "endpoint": OUR_URL, "interests": ["time"]})  # TODO add more interests
         if r.status_code == 204:
             print("Registered")
             break
     except ConnectionError:
+        logger.error('Failed to register at central node')
         pass
 
-    time.sleep(5)
+    time.sleep(2)
 
 logger.info('App initialized')
