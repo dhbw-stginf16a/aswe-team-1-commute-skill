@@ -1,0 +1,22 @@
+language: python
+python:
+  - "3.6"
+services:
+  - docker
+install:
+  - pip install pipenv
+  - pipenv install --dev
+script:
+  #- pipenv run coverage run --source './' --omit './test/*' -m pytest
+  #- pipenv run coverage report
+  - pipenv lock -r > requirements.txt
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
+    tags: true
+env:
+  global:
+    - DOCKER_USERNAME=doriancz
+    - secure: 29x/lnwuRPXkg9VHthJag3Y8/UJrLAcRYXWrLjeVMMOW0BxuDoRHffOyUc/4KQR8eD7Cl4zFExW7CdTLBn7EHgdx90I7EgIRrvtYfxCTQme7HX4R3sIaHRu0w9vEixQSxoi61dmbhUbqA22nZY8pTKxg3zoRLqq6mcO9IZFIySkEcz7Pj3tlYdy5g68gdWDqW1655roYMe08TELq5cErQF6TAy9SBaZprYBjoQoJ0+nRI4CFlA72n29710FrUcAvUwEhtxTXefpQmFjLpKKuBhxsVewCw/6/H7fInN15WF5LO/W9QV14F/cycW5buI4fJpi9SAwMHPBFoQnjyAM9uOB4TJrG4fmKCMdGZ5vkJ68rhtu2pCFrtjbNEfRh+/dOCEgKTXxsuJY+jxquae2GfxXjgwfIyf0vUTHhaJgHktZ5v02PTJANCyKpAo0KdxBtrMqXDzS9tJXY49aopJFcEFMB+HRObT4e1/dZSN49/Z0HWqx4hOAjtaOtJR5pLl1rbayKIJ3/Cw9txBYtOqNjRpgwy7GuGqLZI4gNVw/h62mEb0T/6NIfd4jXTeWuMadkMVX5QgZAvTyYLzTdGwntLp8ElsrNusiQnfYaLF45JL+rYwuWDV8OR739ooJodFnUXeM+OAoGEQxym+KarPCeCzX/i2V+i+pl55qA2y2ktJQ=
