@@ -29,7 +29,24 @@ class PrefStoreClient:
         r = requests.patch("{}/preferences/user/{}".format(self.base_url, user), json = prefs)
         assert r.status_code == 200
 
+class ConcernClient:
+    def __init__(self, base_url):
+        self.base_url = base_url
+
+    def getConcern(self, user, monitor, request_type, payload):
+        data = {
+            "user": user,
+            "type": request_type,
+            "payload": payload
+        }
+        resp = requests.patch("{}/monitoring/{}".format(self.base_url, monitor), json=data).json()
+        assert r.status_code == 200
+        logger.debug(resp[0]['payload'])
+        return resp[0].setdefault('payload', {})
+
+
 PREFSTORE_CLIENT = PrefStoreClient(CENTRAL_NODE_BASE_URL)
+CONCERN_CLIENT = PrefStoreClient(CENTRAL_NODE_BASE_URL)
 
 
 app = connexion.App(__name__, specification_dir='openapi/')

@@ -5,7 +5,7 @@ import requests
 import json
 logger = logging.getLogger(__name__)
 
-from app import PREFSTORE_CLIENT
+from app import PREFSTORE_CLIENT, CONCERN_CLIENT
 
 class Route:
     def __init__(self, method, route, duration):
