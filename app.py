@@ -46,7 +46,7 @@ class ConcernClient:
 
 
 PREFSTORE_CLIENT = PrefStoreClient(CENTRAL_NODE_BASE_URL)
-CONCERN_CLIENT = PrefStoreClient(CENTRAL_NODE_BASE_URL)
+CONCERN_CLIENT = ConcernClient(CENTRAL_NODE_BASE_URL)
 
 
 app = connexion.App(__name__, specification_dir='openapi/')
