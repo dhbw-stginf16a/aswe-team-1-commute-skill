@@ -3,6 +3,10 @@
 import logging
 import requests
 import json
+import datetime
+import re
+import dateutil.parser
+import calendar
 logger = logging.getLogger(__name__)
 
 from app import PREFSTORE_CLIENT, CONCERN_CLIENT
@@ -14,13 +18,30 @@ class Route:
         self.duration = duration
 
 def getEarliestAppointmentOnDay(user, date):
-    raise BaseException("Not yet implemented") # TODO Erik (Ask Thore)
+    payload = {
+        "date": date,
+        "user": user
+    }
+    data = CONCERN_CLIENT.getConcern(user, "calendar", "event_date", payload)
+    event = min(data.events, key=lambda x: dateutil.parser.parse(x.begin))
+    logger.debug("First Event of date is: " + str(event))
+    startTime = dateutil.parser.parse(event.begin)
+    return calendar.timegm(startTime.utctimetuple())
 
 def existsPollen():
     raise BaseException("Not yet implemented") # TODO Andy
 
-def isItRaining(date):
-    raise BaseException("Not yet implemented") # TODO Erik
+def isItRaining(time, location):
+    payload = {
+        "location": location,
+        "time": time
+    }
+    data = CONCERN_CLIENT.getConcern("", "weather", "weather_forecast", payload)
+    rainingCodes = re.compile("[4236]..")  # Look at https://openweathermap.org/weather-conditions for more details
+    for item in data['data']['weather']:
+        if rainingCodes.fullmatch(item['id']):
+            return True
+    return False
 
 def getWork(user):
     preferences = PREFSTORE_CLIENT.get_user_prefs(user)
@@ -92,7 +113,7 @@ def work_route(user, date):
     if date is None and preferences['allergies'] is not None:
         pollen = existsPollen()
 
-    raining = isItRaining(date)
+    raining = isItRaining(timeOfArrival, getHome(user))
 
     if preferences['preferrred_method'] is "car" or pollen or raining:
         return { "success": True, "method": "car", "route": getRouteCar(user).route}, 200
