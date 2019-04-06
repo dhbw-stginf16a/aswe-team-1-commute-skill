@@ -12,3 +12,4 @@ class TestConnexion:
     def client(self):
         with app.app.test_client() as c:
             yield c
+            app.registerThread.stop()
