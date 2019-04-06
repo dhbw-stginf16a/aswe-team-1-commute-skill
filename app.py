@@ -23,7 +23,7 @@ class PrefStoreClient:
 
     def get_user_prefs(self, user):
         r = requests.get("{}/preferences/user/{}".format(self.base_url, user))
-        assert r.status_code == 200
+ #       assert r.status_code == 200
         return r.json()
 
  #   def set_user_prefs(self, user, prefs):
@@ -41,8 +41,7 @@ class ConcernClient:
             "payload": payload
         }
         resp = requests.get("{}/monitoring/{}".format(self.base_url, monitor), json=data).json()
-        logger.debug(f"payload: {resp}")
-        assert resp.status_code == 200
+#        assert resp.status_code == 200#
         logger.debug(resp[0]['payload'])
         return resp[0].setdefault('payload', {})
 
