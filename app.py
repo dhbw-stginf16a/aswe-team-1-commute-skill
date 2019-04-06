@@ -45,6 +45,7 @@ class ConcernClient:
 
         resp = r.json()
         logger.debug(resp[0]['payload'])
+        print(resp)
         return resp[0].setdefault('payload', {})
 
 
