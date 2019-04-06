@@ -40,9 +40,11 @@ class ConcernClient:
             "type": request_type,
             "payload": payload
         }
-        resp = requests.post("{}/monitoring/{}".format(self.base_url, monitor), json=data).json()
-#        assert resp.status_code == 200#
-        logger.debug(resp[0]['payload'])
+        r = requests.post("{}/monitoring/{}".format(self.base_url, monitor), json=data).json()
+        assert r.status_code == 200
+
+        resp = r.toJson()
+        logger.debug(resp['payload'])
         return resp[0].setdefault('payload', {})
 
 
