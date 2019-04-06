@@ -9,7 +9,7 @@ import dateutil.parser
 import calendar
 logger = logging.getLogger(__name__)
 
-from app import PREFSTORE_CLIENT, CONCERN_CLIENT
+from app import PREFSTORE_CLIENT, CONCERN_CLIENT, CENTRAL_NODE_BASE_URL
 
 class Route:
     def __init__(self, method, route, duration):
@@ -28,8 +28,32 @@ def getEarliestAppointmentOnDay(user, date):
     startTime = dateutil.parser.parse(event.begin)
     return calendar.timegm(startTime.utctimetuple())
 
-def existsPollen():
-    raise BaseException("Not yet implemented") # TODO Andy
+def existsPollen(preferences):
+    # set allergies to true if they're set in the preferences
+    allergies = preferences['pollen'].split(';')
+    pollen = { allergy: 'true' for allergy in allergies }
+
+    # Define request body
+    body = {
+        'type': 'current_pollination',
+        'payload': {
+            "region": "Hohenlohe/mittlerer Neckar/Oberschwaben",
+            "day": "today",
+            "pollen": pollen
+        }
+    }
+    # Request pollination information using user preferences
+    resp = requests.post(f'{CENTRAL_NODE_BASE_URL}/monitoring/pollination', json=body).json()
+    logger.debug(resp[0].setDefault['payload'], "payload Key Not Found in response")
+    if resp[0].setdefault('payload', None) is not None:
+        pollinationResp = resp[0]['payload'].setdefault('pollination', None)
+        # Iterate over every allergy, if at least one is active (> 0), return a positive match
+        for allergy in allergies:
+           exposure = pollinationResp.setdefault(allergy, None)
+           if exposure is not None and exposure is not "0":
+               return True
+    # if pollen preferences aren't set, ignore
+    return False
 
 def isItRaining(time, location):
     payload = {
@@ -55,26 +79,33 @@ def getHome(user):
         raise BaseException("Not yet implemented") # TODO think how to escalate to watson
     return preferences['home']
 
-def getRouteCycling(user, start_from=None, destination=None):
+def getRoute(user, start_from=None, destination=None, traveltype='driving'):
     if start_from is None:
         start_from = getHome(user)
     if destination is None:
         destination = getWork(user)
-    raise BaseException("Not yet implemented") # TODO Andy
+
+    payload = {
+        "location": start_from,
+        "destination": destination,
+        "travelmode": traveltype
+    }
+    data = CONCERN_CLIENT.getConcern(user, "traffic", "traffic_route", payload)
+    logger.debug(data.setDefault('routes', "routes Key Not Found in response"))
+    routes = data.setDefault('routes', None)
+    if routes is not None:
+        return routes
+    else:
+        raise BaseException("This shouldn't happen. No route was returned")
+
+def getRouteCycling(user, start_from=None, destination=None):
+    return getRoute(user, start_from, destination, "bicycling")
 
 def getRoutePublicTransport(user, start_from=None, destination=None):
-    if start_from is None:
-        start_from = getHome(user)
-    if destination is None:
-        destination = getWork(user)
-    raise BaseException("Not yet implemented") # TODO Andy
+    return getRoute(user, start_from, destination, "transit")
 
 def getRouteCar(user, start_from=None, destination=None):
-    if start_from is None:
-        start_from = getHome(user)
-    if destination is None:
-        destination = getWork(user)
-    raise BaseException("Not yet implemented") # TODO Andy
+    return getRoute(user, start_from, destination, "driving")
 
 #def get_user_prefs(user, keys):
 #    print("request")
@@ -110,17 +141,17 @@ def work_route(user, date):
         # return { "success": False, "error" : "missingPreferredMethod" }, 200
     # TODO maybe add missing preferences
     pollen = False
-    if date is None and preferences['allergies'] is not None:
-        pollen = existsPollen()
+    if date is None and preferences.setdefault('pollen', None) is not None:
+        pollen = existsPollen(preferences['pollen'])
 
     raining = isItRaining(timeOfArrival, getHome(user))
 
     if preferences['preferrred_method'] is "car" or pollen or raining:
-        return { "success": True, "method": "car", "route": getRouteCar(user).route}, 200
+        return { "success": True, "method": "car", "route": getRouteCar(user)}, 200
     if preferences['preferrred_method'] is "publicTransport":
-        return { "success": True, "method": "publicTransport", "route": getRoutePublicTransport(user).route}, 200
+        return { "success": True, "method": "publicTransport", "route": getRoutePublicTransport(user)}, 200
     if preferences['preferrred_method'] is "Cycling":
-        return { "success": True, "method": "Cycling", "route": getRouteCycling(user).route}, 200
+        return { "success": True, "method": "Cycling", "route": getRouteCycling(user)}, 200
 
     raise BaseException("What are you doing here. This is not expected...")
 
