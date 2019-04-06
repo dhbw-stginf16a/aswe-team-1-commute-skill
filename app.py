@@ -41,7 +41,7 @@ class ConcernClient:
             "payload": payload
         }
         resp = requests.patch("{}/monitoring/{}".format(self.base_url, monitor), json=data).json()
-        assert r.status_code == 200
+        assert resp.status_code == 200
         logger.debug(resp[0]['payload'])
         return resp[0].setdefault('payload', {})
 
