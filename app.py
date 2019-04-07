@@ -41,14 +41,10 @@ class ConcernClient:
             "payload": payload
         }
 #        resp = requests.post("{}/monitoring/{}".format(self.base_url, monitor), json=data).json()
-        logger.error("Requesting the following data")
-        logger.error(data)
+        logger.error("requesting the following: " + repr(data))
         resp = requests.post(f'{self.base_url}/monitoring/{monitor}', json=data)
-        assert resp.status_code == 200, "Error from concern returned" + str(resp)
-        logger.info(resp.json())
-        logger.warning(resp.json())
-        logger.error(resp.json())
-        logger.debug(resp.json())
+        assert resp.status_code == 200, "Error from concern returned" + repr(resp)
+        logger.error("Received: " + repr(resp.json()))
         return resp.json()[0]['payload']
 
 

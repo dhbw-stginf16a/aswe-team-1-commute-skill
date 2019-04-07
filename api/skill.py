@@ -60,7 +60,7 @@ def existsPollen(preferences):
 
 def isItRaining(time, location):
     payload = {
-        "location": location,
+        "location": "Stuttgart, de",
         "time": time
     }
     data = CONCERN_CLIENT.getConcern("", "weather", "weather_forecast", payload)
