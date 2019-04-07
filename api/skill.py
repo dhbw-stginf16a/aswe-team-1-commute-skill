@@ -66,7 +66,7 @@ def isItRaining(time, location):
     data = CONCERN_CLIENT.getConcern("", "weather", "weather_forecast", payload)
     rainingCodes = re.compile("[4236]..")  # Look at https://openweathermap.org/weather-conditions for more details
     for item in data['data']['weather']:
-        if rainingCodes.fullmatch(item['id']):
+        if rainingCodes.fullmatch(str(item['id'])):
             return True
     return False
 
