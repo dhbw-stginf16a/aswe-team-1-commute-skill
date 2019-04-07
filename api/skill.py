@@ -138,9 +138,9 @@ def work_route(user, date):
         getRoutePublicTransport(user),
         getRouteCar(user)
     ]
-    if preferences['preferred_method'] is None:
-        sorted(methods, key=lambda route: route.duration)
-        return { "success": True, "method": methods[0].method, "route": methods[0].route}, 200
+    if preferences['traffic_mode'] is None:
+        sorted(methods, key=lambda route: route['duration'])
+        return { "success": True, "method": methods[0]['method'], "route": methods[0]['route']}, 200
         # return { "success": False, "error" : "missingPreferredMethod" }, 200
     # TODO maybe add missing preferences
     pollen = False
@@ -149,12 +149,12 @@ def work_route(user, date):
 
     raining = isItRaining(timeOfArrival, getHome(user))
 
-    if preferences['preferrred_method'] is "car" or pollen or raining:
-        return { "success": True, "method": "car", "route": getRouteCar(user)}, 200
-    if preferences['preferrred_method'] is "publicTransport":
-        return { "success": True, "method": "publicTransport", "route": getRoutePublicTransport(user)}, 200
-    if preferences['preferrred_method'] is "Cycling":
-        return { "success": True, "method": "Cycling", "route": getRouteCycling(user)}, 200
+    if preferences['traffic_mode'] is "driving" or pollen or raining:
+        return { "success": True, "method": "driving", "route": getRouteCar(user)}, 200
+    if preferences['traffic_mode'] is "transit":
+        return { "success": True, "method": "transit", "route": getRoutePublicTransport(user)}, 200
+    if preferences['traffic_mode'] is "bicycling":
+        return { "success": True, "method": "bicycling", "route": getRouteCycling(user)}, 200
 
     raise BaseException("What are you doing here. This is not expected...")
 
