@@ -22,7 +22,7 @@ def getEarliestAppointmentOnDay(user, date):
     # print(f"{dateIso}") # Temp
 
     payload = {
-        "date": "2019-04-07T00:11:19+00:00",
+        "date": "2019-04-07T20:11:19+00:00",
         "user": user
     }
     data = CONCERN_CLIENT.getConcern(user, "calendar", "event_date", payload)
