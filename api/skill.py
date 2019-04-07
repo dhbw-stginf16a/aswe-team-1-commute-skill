@@ -149,6 +149,9 @@ def work_route(user, date):
 
     raining = isItRaining(timeOfArrival, getHome(user))
 
+    logger.error("trafficMode:" + repr(preferences['traffic_mode']))
+    logger.error("pollen: " + repr(pollen))
+    logger.error("raining: " + repr(raining))
     if preferences['traffic_mode'] is "driving" or pollen or raining:
         return { "success": True, "method": "driving", "route": getRouteCar(user)}, 200
     if preferences['traffic_mode'] is "transit":
