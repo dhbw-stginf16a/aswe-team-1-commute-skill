@@ -152,11 +152,11 @@ def work_route(user, date):
     logger.error("trafficMode:" + repr(preferences['traffic_mode']))
     logger.error("pollen: " + repr(pollen))
     logger.error("raining: " + repr(raining))
-    if preferences['traffic_mode'] is "driving" or pollen or raining:
+    if preferences['traffic_mode'] == "driving" or pollen or raining:
         return { "success": True, "method": "driving", "route": getRouteCar(user)}, 200
-    if preferences['traffic_mode'] is "transit":
+    if preferences['traffic_mode'] == "transit":
         return { "success": True, "method": "transit", "route": getRoutePublicTransport(user)}, 200
-    if preferences['traffic_mode'] is "bicycling":
+    if preferences['traffic_mode'] == "bicycling":
         return { "success": True, "method": "bicycling", "route": getRouteCycling(user)}, 200
 
     raise BaseException("What are you doing here. This is not expected...")
