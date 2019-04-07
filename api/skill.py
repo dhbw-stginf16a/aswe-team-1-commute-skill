@@ -18,7 +18,7 @@ class Route:
         self.duration = duration
 
 def getEarliestAppointmentOnDay(user, date):
-    dateIso = dateutil.parser.parse(date).isoformat
+    dateIso = dateutil.parser.parse("2019-04-07T00:11:19+00:00").isoformat
     print(f"{dateIso}") # Temp
 
     payload = {
