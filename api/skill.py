@@ -152,14 +152,15 @@ def work_route(user, date):
     logger.error("trafficMode:" + repr(preferences['traffic_mode']))
     logger.error("pollen: " + repr(pollen))
     logger.error("raining: " + repr(raining))
-    if preferences['traffic_mode'] == "driving" or pollen or raining:
+    if preferences['traffic_mode'] == "bicycling" and not (raining or pollen):
+        return { "success": True, "method": "bicycling", "route": getRouteCycling(user)}, 200
+    if preferences['traffic_mode'] == "driving" or pollen:
         return { "success": True, "method": "driving", "route": getRouteCar(user)}, 200
     if preferences['traffic_mode'] == "transit":
         return { "success": True, "method": "transit", "route": getRoutePublicTransport(user)}, 200
-    if preferences['traffic_mode'] == "bicycling":
-        return { "success": True, "method": "bicycling", "route": getRouteCycling(user)}, 200
 
-    raise BaseException("What are you doing here. This is not expected...")
+    logger.error("Failed to determine method of transportation.")
+    return { "success": False, "error": "Failed to decide which method of transportation is right for you. Have you set your preferences" }, 200
 
 
 def request(body):
