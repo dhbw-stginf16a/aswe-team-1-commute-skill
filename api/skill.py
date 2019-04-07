@@ -26,7 +26,7 @@ def getEarliestAppointmentOnDay(user, date):
         "user": user
     }
     data = CONCERN_CLIENT.getConcern(user, "calendar", "event_date", payload)
-    event = min(data.setdefault('events', []), key=lambda x: dateutil.parser.parse(x.begin))
+    event = min(data.setdefault('events', []), key=lambda x: dateutil.parser.parse(x['begin']))
     logger.debug("First Event of date is: " + str(event))
     startTime = dateutil.parser.parse(event.begin)
     return calendar.timegm(startTime.utctimetuple())
