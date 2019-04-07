@@ -42,7 +42,7 @@ Time based trigger (optional)
 ```json
 {
     "payload":{
-        "date":"10.02.2019"
+        "date":"2019-02-13"
     }
 }
 ```
