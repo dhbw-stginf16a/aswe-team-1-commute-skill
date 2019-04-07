@@ -91,7 +91,7 @@ def getRoute(user, start_from=None, destination=None, traveltype='driving'):
     payload = {
         "location": start_from,
         "destination": destination,
-        "travelmode": traveltype
+        "travelmode": [traveltype]
     }
     data = CONCERN_CLIENT.getConcern(user, "traffic", "traffic_route", payload)
     logger.debug(data.setDefault('routes', "routes Key Not Found in response"))
