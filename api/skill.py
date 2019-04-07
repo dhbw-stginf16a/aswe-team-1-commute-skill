@@ -72,15 +72,15 @@ def isItRaining(time, location):
 
 def getWork(user):
     preferences = PREFSTORE_CLIENT.get_user_prefs(user)
-    if preferences['work'] is None: # TODO check name of this preference
+    if preferences['work_address'] is None:
         raise BaseException("Not yet implemented") # TODO think how to escalate to watson
-    return preferences['work']
+    return preferences['work_address']
 
 def getHome(user):
     preferences = PREFSTORE_CLIENT.get_user_prefs(user)
-    if preferences['home'] is None: # TODO check name of this preference
+    if preferences['home_address'] is None:
         raise BaseException("Not yet implemented") # TODO think how to escalate to watson
-    return preferences['home']
+    return preferences['home_address']
 
 def getRoute(user, start_from=None, destination=None, traveltype='driving'):
     if start_from is None:
