@@ -18,11 +18,11 @@ class Route:
         self.duration = duration
 
 def getEarliestAppointmentOnDay(user, date):
-    dateIso = dateutil.parser.parse("2019-04-07T00:11:19+00:00").isoformat
-    print(f"{dateIso}") # Temp
+    # dateIso = dateutil.parser.parse("2019-04-07T00:11:19+00:00").isoformat
+    # print(f"{dateIso}") # Temp
 
     payload = {
-        "date": dateIso,
+        "date": "2019-04-07T00:11:19+00:00",
         "user": user
     }
     data = CONCERN_CLIENT.getConcern(user, "calendar", "event_date", payload)
